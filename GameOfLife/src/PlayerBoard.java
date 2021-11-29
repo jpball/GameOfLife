@@ -1,6 +1,4 @@
-import java.awt.image.BufferedImage;
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -25,7 +23,7 @@ public class PlayerBoard extends JFrame{
     =================================
     */
     private void setupScreen(){
-        setLayout(new GridBagLayout());
+        setLayout(new GridLayout(1,1));
         setSize(1000,750);
         setLocation(250, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,15 +31,17 @@ public class PlayerBoard extends JFrame{
         GridBagConstraints c = new GridBagConstraints();
 
         c.fill = GridBagConstraints.VERTICAL;
-        c.weightx = 0.1;
+        c.weightx = 0.66;
         c.gridx = 0;
         setupGridPanel();
         add(gridPanel);
 
-        c.weightx = 0.5;
+        /*
+        c.weightx = 0.33;
         c.gridx = 1;
         setupOptionPanel();
-        add(optionPanel);
+        add(optionPanel, c);
+        */
 
         // Configure the JFrame and display it
         setVisible(true);
@@ -49,14 +49,24 @@ public class PlayerBoard extends JFrame{
     //--
     private void setupGridPanel(){
         gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(BOARD_DIMENSION, BOARD_DIMENSION));
-        for(int i = 0; i < BOARD_DIMENSION*BOARD_DIMENSION; i++){
-            JButton jb = new JButton();
-            jb.setOpaque(true);
-            jb.setSize(new Dimension(((this.getWidth()/3)/BOARD_DIMENSION), this.getHeight()/BOARD_DIMENSION));
-            gridPanel.add(jb);
-        }
-        gridPanel.setPreferredSize(new Dimension(500, 500));
+        gridPanel.setLayout(new GridLayout(1,1));
+        gridPanel.setBackground(Color.darkGray);
+        BoardPanel bp = new BoardPanel(BOARD_DIMENSION, BOARD_DIMENSION);
+        bp.addMouseListener(new MouseListener(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                bp.setPixel(e.getPoint(), player.getPlayerColor());
+            }
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+            @Override
+            public void mouseExited(MouseEvent e) {}
+            @Override
+            public void mousePressed(MouseEvent e) {}
+            @Override
+            public void mouseReleased(MouseEvent e) {}
+        });
+        gridPanel.add(bp);
     }
     //--
     private void setupOptionPanel(){
