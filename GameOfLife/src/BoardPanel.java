@@ -13,6 +13,7 @@ public class BoardPanel extends JPanel {
         this.image_height = height;
         // this is the internal representation of the image
         this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
         for(int x = 0; x < image_width; x++){
             for(int y = 0; y < image_height; y++){
                 image.setRGB(x, y, Color.white.getRGB());
