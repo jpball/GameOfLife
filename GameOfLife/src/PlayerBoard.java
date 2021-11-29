@@ -1,5 +1,7 @@
 import java.awt.image.BufferedImage;
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -7,14 +9,14 @@ public class PlayerBoard extends JFrame{
 
     private final int BOARD_DIMENSION = 50;
     private Player player;
+
     private JPanel gridPanel;
-    int x = 0;
-    int y = 0;
+    private JPanel optionPanel;
     //--
     public PlayerBoard(Player p){
         setPlayer(p);
 
-        displayBoard();
+        setupScreen();
     }
     //--
     /*
@@ -22,45 +24,51 @@ public class PlayerBoard extends JFrame{
     ======= GUI FUNCTIONS ===========
     =================================
     */
-    private void displayBoard(){
-        gridPanel = setupGridPanel();
+    private void setupScreen(){
+        setLayout(new GridBagLayout());
+        setSize(1000,750);
+        setLocation(250, 250);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        c.fill = GridBagConstraints.VERTICAL;
+        c.weightx = 0.1;
+        c.gridx = 0;
+        setupGridPanel();
+        add(gridPanel);
+
+        c.weightx = 0.5;
+        c.gridx = 1;
+        setupOptionPanel();
+        add(optionPanel);
 
         // Configure the JFrame and display it
-        setLocation(250, 250);
-        setSize(500,500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
     //--
-    private JPanel setupGridPanel(){
-        JPanel gPanel = new JPanel();
-        gPanel.setLayout(new GridLayout(1,1));
+    private void setupGridPanel(){
+        gridPanel = new JPanel();
+        gridPanel.setLayout(new GridLayout(BOARD_DIMENSION, BOARD_DIMENSION));
+        for(int i = 0; i < BOARD_DIMENSION*BOARD_DIMENSION; i++){
+            JButton jb = new JButton();
+            jb.setOpaque(true);
+            jb.setSize(new Dimension(((this.getWidth()/3)/BOARD_DIMENSION), this.getHeight()/BOARD_DIMENSION));
+            gridPanel.add(jb);
+        }
+        gridPanel.setPreferredSize(new Dimension(500, 500));
+    }
+    //--
+    private void setupOptionPanel(){
+        optionPanel = new JPanel();
 
-        BufferedImage bimg = new BufferedImage(250,250, BufferedImage.TYPE_INT_RGB);
-        bimg.getGraphics().drawRect(100, 100, 50, 50);
-
-        JLabel imgLabel = new JLabel(new ImageIcon(bimg));
-
-        gPanel.addMouseListener(new MouseListener(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int x = e.getX() - imgLabel.getX();
-                int y = e.getY() - imgLabel.getY();
-                bimg.setRGB(x, y, player.getPlayerColor().getRGB());
-                imgLabel.repaint();
-                gPanel.repaint();
-            }
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-        });
-        gPanel.add(imgLabel);
-        return gPanel;
+        JPanel playerInfoPanel = new JPanel();
+        playerInfoPanel.setLayout(new GridLayout(2,1));
+        JLabel playerNum = new JLabel("Player #" + Integer.toString(player.getPlayerNum()));
+        JLabel playerName = new JLabel(player.getPlayerName());
+        playerInfoPanel.add(playerNum, JPanel.CENTER_ALIGNMENT);
+        playerInfoPanel.add(playerName, JPanel.CENTER_ALIGNMENT);
+        optionPanel.add(playerInfoPanel);
     }
     /*
     =================================

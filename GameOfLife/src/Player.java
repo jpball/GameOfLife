@@ -9,7 +9,9 @@ public class Player {
     private ArrayList<Boolean> board;
     //--
     public Player(int num, Color col, String name){
-        
+        setPlayerNum(num);
+        setPlayerColor(col);
+        setPlayerName(name);
     }
     //--
     public void setPlayerColor(Color col){
