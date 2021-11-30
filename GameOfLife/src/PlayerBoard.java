@@ -10,6 +10,7 @@ public class PlayerBoard extends JFrame{
 
     private BoardPanel gridPanel;
     private JPanel optionPanel;
+
     //--
     public PlayerBoard(Player p){
         setPlayer(p);
@@ -23,50 +24,39 @@ public class PlayerBoard extends JFrame{
     =================================
     */
     private void setupScreen(){
-        setLayout(new GridLayout(1,2));
-        setSize(1000,700);
+        setLayout(new GridBagLayout());
+        setSize(700,700);
+        setPreferredSize(new Dimension(700, 700));
+        setMaximumSize(new Dimension(700, 700));
         setLocation(100, 100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
         GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(10,10,10,10);
 
-        c.weightx = 0.66;
-        c.fill = GridBagConstraints.VERTICAL;
-        c.gridx = 0;
         setupGridPanel();
+        c.gridx = 0;
+        c.weightx = 0.5;
         add(gridPanel);
-
-        c.fill = GridBagConstraints.VERTICAL;
-        c.weightx = 0.33;
-        c.gridx = 1;
+        
         setupOptionPanel();
+        c.gridx = 1;
         add(optionPanel);
 
+        pack();
         // Configure the JFrame and display it
         setVisible(true);
     }
     //--
     private void setupGridPanel(){
         gridPanel = new BoardPanel(BOARD_DIMENSION, BOARD_DIMENSION);
-        gridPanel.setPreferredSize(new Dimension(2*this.getWidth()/3, this.getHeight()));
-        gridPanel.addMouseListener(new MouseListener(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                gridPanel.setPixel(e.getPoint(), player.getPlayerColor());
-            }
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-            @Override
-            public void mouseExited(MouseEvent e) {}
-            @Override
-            public void mousePressed(MouseEvent e) {}
-            @Override
-            public void mouseReleased(MouseEvent e) {}
-        });
+        gridPanel.setPreferredSize(new Dimension(500, 500));
     }
     //--
     private void setupOptionPanel(){
         optionPanel = new JPanel();
+        optionPanel.setPreferredSize(new Dimension(this.getWidth() - gridPanel.getWidth(), this.getHeight()));
 
         JPanel playerInfoPanel = new JPanel();
         playerInfoPanel.setLayout(new GridLayout(2,1));
