@@ -7,7 +7,6 @@ public class PlayerBoard extends JFrame{
 
     private final int BOARD_DIMENSION = 10;
     private Player player;
-
     private BoardPanel gridPanel;
     private JPanel optionPanel;
 
@@ -25,11 +24,11 @@ public class PlayerBoard extends JFrame{
     */
     private void setupScreen(){
         setLayout(new GridBagLayout());
-        setSize(700,700);
-        setPreferredSize(new Dimension(700, 700));
-        setMaximumSize(new Dimension(700, 700));
+        setSize(800,600);
+        setPreferredSize(new Dimension(800, 700));
         setLocation(100, 100);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
 
 
         GridBagConstraints c = new GridBagConstraints();
@@ -37,12 +36,14 @@ public class PlayerBoard extends JFrame{
 
         setupGridPanel();
         c.gridx = 0;
+        c.gridy = 0;
         c.weightx = 0.5;
-        add(gridPanel);
+        add(gridPanel, c);
         
         setupOptionPanel();
         c.gridx = 1;
-        add(optionPanel);
+        c.weightx = 0.5;
+        add(optionPanel, c);
 
         pack();
         // Configure the JFrame and display it
@@ -51,20 +52,12 @@ public class PlayerBoard extends JFrame{
     //--
     private void setupGridPanel(){
         gridPanel = new BoardPanel(BOARD_DIMENSION, BOARD_DIMENSION);
-        gridPanel.setPreferredSize(new Dimension(500, 500));
+        gridPanel.setSize(new Dimension(250, 250));
     }
     //--
     private void setupOptionPanel(){
         optionPanel = new JPanel();
-        optionPanel.setPreferredSize(new Dimension(this.getWidth() - gridPanel.getWidth(), this.getHeight()));
-
-        JPanel playerInfoPanel = new JPanel();
-        playerInfoPanel.setLayout(new GridLayout(2,1));
-        JLabel playerNum = new JLabel("Player #" + Integer.toString(player.getPlayerNum()));
-        JLabel playerName = new JLabel(player.getPlayerName());
-        playerInfoPanel.add(playerNum, JPanel.CENTER_ALIGNMENT);
-        playerInfoPanel.add(playerName, JPanel.CENTER_ALIGNMENT);
-        optionPanel.add(playerInfoPanel);
+        optionPanel.add(new JLabel("Hello world!"));
     }
     /*
     =================================
