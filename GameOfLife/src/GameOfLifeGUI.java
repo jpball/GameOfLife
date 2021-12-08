@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +24,8 @@ public class GameOfLifeGUI extends JFrame{
 
         // Frame settings
         setVisible(true);
+        
+        setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     //--
