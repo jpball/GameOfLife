@@ -14,6 +14,7 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
 
     // Option Panel Data Members
     private JPanel optionPanel;
+    private JCheckBox attachCB;
     
     // Strat Box
     private JPanel stratBoxPanel;
@@ -123,6 +124,22 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
         
         setupRunPanel();
         optionPanel.add(runPanel);
+
+        attachCB = new JCheckBox("Attach", true);
+        attachCB.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(!attachCB.isSelected()){
+                    eque.detach(GameOfLifeGUI.this);
+                    attachCB.setSelected(false);
+                }
+                else{
+                    eque.attach(GameOfLifeGUI.this);
+                    attachCB.setSelected(true);
+                }
+            }
+        });
+        optionPanel.add(attachCB);
     }
     //--
     private void setupStratBoxPanel(){
@@ -179,11 +196,16 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
     public void actionPerformed(ActionEvent e) {
         CellButton cb = (CellButton)e.getSource();
         if(!cb.getCell().isAlive()){ // Check if the cell is not alive
-            eque.notifyObservers(cb.getXCoord(), cb.getYCoord(), true);
+            cb.reviveCell();
+            if(attachCB.isSelected()){
+                eque.notifyObservers(cb.getXCoord(), cb.getYCoord(), true);
+            }
         }
         else{
-            eque.notifyObservers(cb.getXCoord(), cb.getYCoord(), false);
+            cb.killCell();
+            if(attachCB.isSelected()){
+                eque.notifyObservers(cb.getXCoord(), cb.getYCoord(), false);
+            }
         }
-        
     }
 }
