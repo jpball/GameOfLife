@@ -1,6 +1,9 @@
+import java.awt.Color;
 public class Cell {
     private boolean isAlive;
     private int numNeighbors;
+    private final Color ALIVE_COLOR = Color.cyan;
+    private final Color DEAD_COLOR = Color.white;
     //--
     public Cell(){
         setIsAlive(false);
@@ -33,5 +36,13 @@ public class Cell {
     //--
     public void setNumNeighbors(int val){
         numNeighbors = val;
+    }
+    //--
+    public Color getAliveColor(){
+        return ALIVE_COLOR;
+    }
+    //--
+    public Color getDeadColor(){
+        return DEAD_COLOR;
     }
 }

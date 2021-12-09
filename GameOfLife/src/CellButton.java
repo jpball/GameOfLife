@@ -1,25 +1,27 @@
 import javax.swing.JButton;
-
-import org.w3c.dom.events.MouseEvent;
-
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 
-public class CellButton extends JButton implements ActionListener{
-    private final Color ALIVE_COLOR = Color.cyan;
-    private final Color DEAD_COLOR = Color.white;
+public class CellButton extends JButton{
     private int XCoord;
     private int YCoord;
     private Cell cell;
     //--
-    public CellButton(int x, int y){
-        cell = new Cell();
-        setBackground(DEAD_COLOR);
+    public CellButton(int x, int y, Cell c){
+        cell = c;
+        setBackground(cell.getDeadColor()); // Default starting color
         XCoord = x;
         YCoord = y;
-        addActionListener(this);
+    }
+    //--
+    public void killCell(){
+        setBackground(cell.getDeadColor());
+        cell.killCell();
+    }
+    //--
+    public void reviveCell(){
+        setBackground(cell.getAliveColor());
+        cell.reviveCell();
     }
     //--
     public int getXCoord(){
@@ -33,16 +35,5 @@ public class CellButton extends JButton implements ActionListener{
     public Cell getCell(){
         return cell;
     }
-    //--
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(!cell.isAlive()){ // Check if the cell is not alive
-            cell.reviveCell(); // When clicked, set the cell to be alive
-            setBackground(ALIVE_COLOR);
-        }
-        else{
-            cell.killCell();
-            setBackground(DEAD_COLOR);
-        }
-    }
+
 }

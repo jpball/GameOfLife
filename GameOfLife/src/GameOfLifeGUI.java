@@ -1,8 +1,12 @@
 import java.util.ArrayList;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class GameOfLifeGUI extends JFrame{
+public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
+    private EditQueue eque;
+    
     // Board Panel Data Members
     private final int BOARD_DIMENSION = 20;
     private JPanel boardPanel;
@@ -10,20 +14,33 @@ public class GameOfLifeGUI extends JFrame{
 
     // Option Panel Data Members
     private JPanel optionPanel;
+    
+    // Strat Box
     private JPanel stratBoxPanel;
-    private JCheckBox conwayCB;
-    private JCheckBox customCB;
+    private JRadioButton conwayRB;
+    private JRadioButton customRB;
 
+    // Run Panel
+    private JPanel runPanel;
+
+    private GameOfLife GOL;
     //--
-    public GameOfLifeGUI(){
+    public GameOfLifeGUI(EditQueue q){
         super("Game of Life");
-        try {
-            UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
-         } catch (Exception e) {
-                    e.printStackTrace();
-         }
+        GOL = new GameOfLife(BOARD_DIMENSION);
+        eque = q;
+        eque.attach(this); // Attach this to the Observer pattern
+        AdjustLookAndFeel();
         createPixGrid();
         setupGUI();
+    }
+    private void AdjustLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+         }
     }
     /*  
         ===========================
@@ -32,20 +49,20 @@ public class GameOfLifeGUI extends JFrame{
     */
     // Setup the main GUI
     private void setupGUI(){
-        setSize(700,700);
+        setSize(600,800);
         setLayout(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();
         
         setupBoardPanel();
-        c.gridx = 0;
+        c.gridy = 0;
         add(boardPanel, c);
 
         setupOptionPanel();
-        c.gridx = 1;
+        c.gridy = 1;
         add(optionPanel, c);
 
-    
+        pack();
         // Frame settings
         setVisible(true);
         setResizable(false);
@@ -76,7 +93,8 @@ public class GameOfLifeGUI extends JFrame{
         for(int row = 0; row < BOARD_DIMENSION; row++){
             ArrayList<CellButton> rowList = new ArrayList<CellButton>();
             for(int col = 0; col < BOARD_DIMENSION; col++){
-                CellButton pb = new CellButton(col, row);
+                CellButton pb = new CellButton(col, row, GOL.getCell(col, row));
+                pb.addActionListener(this);
                 pb.setOpaque(true);
                 pb.setBackground(Color.white);
                 rowList.add(pb);
@@ -98,16 +116,74 @@ public class GameOfLifeGUI extends JFrame{
     // - Explain Button???
     private void setupOptionPanel(){
         optionPanel = new JPanel();
+        optionPanel.setPreferredSize(new Dimension(500, 250));
 
         setupStratBoxPanel(); // Intializes and adds components to JPanel stratBoxPanel
-        add(stratBoxPanel);
+        optionPanel.add(stratBoxPanel);
+        
+        setupRunPanel();
+        optionPanel.add(runPanel);
     }
     //--
     private void setupStratBoxPanel(){
         stratBoxPanel = new JPanel();
-        conwayCB = new JCheckBox();
-        customCB = new JCheckBox();
-        stratBoxPanel.add(conwayCB);
-        stratBoxPanel.add(customCB);
+        stratBoxPanel.setLayout(new GridLayout(2,2));
+        conwayRB = new JRadioButton("Conway's Rules", true);
+        customRB = new JRadioButton("Custom Rules");
+
+        stratBoxPanel.add(conwayRB);
+        conwayRB.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                conwayRB.setSelected(true);
+                customRB.setSelected(false);
+            }
+        });
+        // Create the CUSTOM BUTTON action listener
+        customRB.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                customRB.setSelected(true);
+                conwayRB.setSelected(false);
+            }
+        });
+        stratBoxPanel.add(customRB);
+    }
+    //--
+    private void setupRunPanel(){
+        runPanel = new JPanel();
+        JButton runButton = new JButton("Run");
+        runButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+            }
+        });
+    }
+    /*  
+        ===========================
+        ===== OTHER FUNCTIONS =====
+        =========================== 
+    */
+    @Override
+    public void update(int x, int y, boolean isRevive) {
+        if(isRevive){
+            grid.get(y).get(x).reviveCell();
+        }
+        else{
+            grid.get(y).get(x).killCell();
+        }
+    }
+    //
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        CellButton cb = (CellButton)e.getSource();
+        if(!cb.getCell().isAlive()){ // Check if the cell is not alive
+            eque.notifyObservers(cb.getXCoord(), cb.getYCoord(), true);
+        }
+        else{
+            eque.notifyObservers(cb.getXCoord(), cb.getYCoord(), false);
+        }
+        
     }
 }
