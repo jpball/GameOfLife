@@ -1,3 +1,3 @@
-public class Strategy {
-    
+public interface Strategy {
+    public void calculateNextGenStatus(CellButton cButton);
 }

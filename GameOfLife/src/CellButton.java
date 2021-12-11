@@ -1,6 +1,4 @@
 import javax.swing.JButton;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class CellButton extends JButton{
     private int XCoord;
@@ -34,6 +32,10 @@ public class CellButton extends JButton{
     //--
     public Cell getCell(){
         return cell;
+    }
+    //--
+    public void resetNeighborCount(){
+        cell.setNumNeighbors(0);
     }
 
 }

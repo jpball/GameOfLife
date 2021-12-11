@@ -23,7 +23,7 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
 
     // Run Panel
     private JPanel runPanel;
-
+    private Strategy gameStrat;
     private GameOfLife GOL;
     //--
     public GameOfLifeGUI(EditQueue q){
@@ -31,6 +31,7 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
         GOL = new GameOfLife(BOARD_DIMENSION);
         eque = q;
         eque.attach(this); // Attach this to the Observer pattern
+        gameStrat = new ConwayStrategy(); // By default, run Conway's rules
         AdjustLookAndFeel();
         createPixGrid();
         setupGUI();
@@ -94,7 +95,7 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
         for(int row = 0; row < BOARD_DIMENSION; row++){
             ArrayList<CellButton> rowList = new ArrayList<CellButton>();
             for(int col = 0; col < BOARD_DIMENSION; col++){
-                CellButton pb = new CellButton(col, row, GOL.getCell(col, row));
+                CellButton pb = new CellButton(col, row, new Cell());
                 pb.addActionListener(this);
                 pb.setOpaque(true);
                 pb.setBackground(Color.white);
@@ -154,6 +155,7 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
             public void actionPerformed(ActionEvent e) {
                 conwayRB.setSelected(true);
                 customRB.setSelected(false);
+                gameStrat = new ConwayStrategy();
             }
         });
         // Create the CUSTOM BUTTON action listener
@@ -173,9 +175,10 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
         runButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                runNextGeneration();
             }
         });
+        runPanel.add(runButton);
     }
     /*  
         ===========================
@@ -205,6 +208,78 @@ public class GameOfLifeGUI extends JFrame implements ActionListener, Observer{
             cb.killCell();
             if(attachCB.isSelected()){
                 eque.notifyObservers(cb.getXCoord(), cb.getYCoord(), false);
+            }
+        }
+    }
+    //--
+    private void runNextGeneration(){
+        updateNeighborCounts();
+        for (ArrayList<CellButton> arrayList : grid) {
+            for (CellButton cellButton : arrayList) {
+                gameStrat.calculateNextGenStatus(cellButton);
+            }
+        }
+    }
+    //--
+    private void updateNeighborCounts(){
+        for(int row = 0; row < BOARD_DIMENSION; row++){
+            for(int col = 0; col < BOARD_DIMENSION; col++){
+                CellButton cb = grid.get(row).get(col);
+                cb.resetNeighborCount();
+                CellButton neighbor;
+
+                if(row > 0){ // cb not top row
+                    neighbor = grid.get(row-1).get(col);
+                    if(neighbor.getCell().isAlive()){
+                        cb.getCell().incrementNeighbors();
+                    }
+                }
+                if(row < BOARD_DIMENSION-1){
+                    neighbor = grid.get(row+1).get(col);
+                    if(neighbor.getCell().isAlive()){
+                        cb.getCell().incrementNeighbors();
+                    }
+                }
+
+                if(col > 0){ // cb not far left col
+                    neighbor = grid.get(row).get(col-1);
+                    if(neighbor.getCell().isAlive()){
+                        cb.getCell().incrementNeighbors();
+                    }
+
+                    if(row > 0){
+                        neighbor = grid.get(row-1).get(col-1);
+                        if(neighbor.getCell().isAlive()){
+                            cb.getCell().incrementNeighbors();
+                        }
+                    }
+                    if(row < BOARD_DIMENSION-1){
+                        neighbor = grid.get(row+1).get(col-1);
+                        if(neighbor.getCell().isAlive()){
+                            cb.getCell().incrementNeighbors();
+                        }
+                    }
+                }
+
+                if(col < BOARD_DIMENSION-1){ // cb not far right col
+                    neighbor = grid.get(row).get(col+1);
+                    if(neighbor.getCell().isAlive()){
+                        cb.getCell().incrementNeighbors();
+                    }
+
+                    if(row > 0){ // cb not top row
+                        neighbor = grid.get(row-1).get(col+1);
+                        if(neighbor.getCell().isAlive()){
+                            cb.getCell().incrementNeighbors();
+                        }
+                    }
+                    if(row < BOARD_DIMENSION-1){ // cb not bot row
+                        neighbor = grid.get(row+1).get(col+1);
+                        if(neighbor.getCell().isAlive()){
+                            cb.getCell().incrementNeighbors();
+                        }
+                    }
+                }
             }
         }
     }
