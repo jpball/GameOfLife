@@ -2,7 +2,7 @@ import java.awt.Color;
 public class Cell {
     private boolean isAlive;
     private int numNeighbors;
-    private final Color ALIVE_COLOR = Color.cyan;
+    private final Color ALIVE_COLOR = Color.black;
     private final Color DEAD_COLOR = Color.white;
     //--
     public Cell(){

@@ -14,6 +14,13 @@ public class EditQueue implements Subject{
     }
     //--
     @Override
+    public void run(){
+        for (Observer observer : observers) {
+            observer.runNextGeneration();
+        }
+    }
+    //--
+    @Override
     public void attach(Observer o) {
         observers.add(o);
     }
